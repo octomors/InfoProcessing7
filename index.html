@@ -7,7 +7,228 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --bg: #f7f4eb;
+      --card: rgba(255, 255, 255, 0.85);
+      --ink: #1f2b23;
+      --muted: #52685a;
+      --accent: #0f8a68;
+      --accent-2: #e27d34;
+      --shadow: 0 14px 35px rgba(31, 43, 35, 0.12);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Manrope, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(226, 125, 52, 0.2), transparent 34%),
+        radial-gradient(circle at 85% 80%, rgba(15, 138, 104, 0.25), transparent 30%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    .bg-shape {
+      position: fixed;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .bg-shape-1 {
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      top: -50px;
+      background: rgba(15, 138, 104, 0.15);
+    }
+
+    .bg-shape-2 {
+      width: 220px;
+      height: 220px;
+      left: -60px;
+      bottom: -50px;
+      background: rgba(226, 125, 52, 0.18);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 2rem));
+      margin: 2rem auto 3rem;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 0.8rem 0 1.4rem;
+      max-width: 64ch;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(31, 43, 35, 0.1);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(3px);
+    }
+
+    .controls {
+      padding: 1.2rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .upload {
+      display: grid;
+      gap: 0.15rem;
+      width: fit-content;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), #139f79);
+      color: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .upload:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 138, 104, 0.25);
+    }
+
+    .upload-title {
+      font-weight: 700;
+    }
+
+    .upload-hint {
+      font-size: 0.86rem;
+      opacity: 0.9;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .method-group {
+      margin: 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px dashed rgba(31, 43, 35, 0.25);
+      border-radius: 12px;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .method-group legend {
+      padding: 0 0.35rem;
+      font-weight: 600;
+    }
+
+    .method-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .slider-wrap {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    #thresholdRange {
+      width: 100%;
+      accent-color: var(--accent-2);
+    }
+
+    .meta {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    #downloadBtn {
+      width: fit-content;
+      padding: 0.7rem 1.05rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-2), #ef975d);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #downloadBtn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .preview-grid {
+      margin-top: 1.1rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .canvas-card {
+      padding: 1rem;
+    }
+
+    .canvas-card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    canvas {
+      width: 100%;
+      max-height: 460px;
+      background: #fafafa;
+      border: 1px solid rgba(31, 43, 35, 0.2);
+      border-radius: 10px;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero,
+    .controls,
+    .preview-grid {
+      animation: reveal 0.55s ease both;
+    }
+
+    .preview-grid {
+      animation-delay: 0.08s;
+    }
+
+    @media (max-width: 840px) {
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: min(1100px, calc(100% - 1.1rem));
+        margin-top: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="bg-shape bg-shape-1" aria-hidden="true"></div>
@@ -59,6 +280,185 @@
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const sourceCanvas = document.getElementById("sourceCanvas");
+    const resultCanvas = document.getElementById("resultCanvas");
+    const methodRadios = document.querySelectorAll('input[name="method"]');
+    const thresholdRange = document.getElementById("thresholdRange");
+    const thresholdValue = document.getElementById("thresholdValue");
+    const sliderWrap = document.getElementById("sliderWrap");
+    const infoText = document.getElementById("infoText");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    const sourceCtx = sourceCanvas.getContext("2d", { willReadFrequently: true });
+    const resultCtx = resultCanvas.getContext("2d", { willReadFrequently: true });
+
+    let sourceImageData = null;
+
+    function getSelectedMethod() {
+      return document.querySelector('input[name="method"]:checked').value;
+    }
+
+    function setCanvasSize(width, height) {
+      sourceCanvas.width = width;
+      sourceCanvas.height = height;
+      resultCanvas.width = width;
+      resultCanvas.height = height;
+    }
+
+    function toGray(r, g, b) {
+      return Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    }
+
+    function computeOtsuThreshold(grayValues) {
+      const histogram = new Array(256).fill(0);
+
+      for (let i = 0; i < grayValues.length; i += 1) {
+        histogram[grayValues[i]] += 1;
+      }
+
+      const total = grayValues.length;
+      let sum = 0;
+      for (let i = 0; i < 256; i += 1) {
+        sum += i * histogram[i];
+      }
+
+      let sumBackground = 0;
+      let weightBackground = 0;
+      let maxVariance = -1;
+      let threshold = 0;
+
+      for (let t = 0; t < 256; t += 1) {
+        weightBackground += histogram[t];
+        if (weightBackground === 0) {
+          continue;
+        }
+
+        const weightForeground = total - weightBackground;
+        if (weightForeground === 0) {
+          break;
+        }
+
+        sumBackground += t * histogram[t];
+
+        const meanBackground = sumBackground / weightBackground;
+        const meanForeground = (sum - sumBackground) / weightForeground;
+        const betweenClassVariance =
+          weightBackground * weightForeground * (meanBackground - meanForeground) ** 2;
+
+        if (betweenClassVariance > maxVariance) {
+          maxVariance = betweenClassVariance;
+          threshold = t;
+        }
+      }
+
+      return threshold;
+    }
+
+    function binarize() {
+      if (!sourceImageData) {
+        return;
+      }
+
+      const data = sourceImageData.data;
+      const result = resultCtx.createImageData(sourceImageData.width, sourceImageData.height);
+      const out = result.data;
+      const grayValues = new Uint8Array(sourceImageData.width * sourceImageData.height);
+
+      let grayIndex = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        grayValues[grayIndex] = toGray(data[i], data[i + 1], data[i + 2]);
+        grayIndex += 1;
+      }
+
+      let threshold = Number(thresholdRange.value);
+      const method = getSelectedMethod();
+
+      if (method === "otsu") {
+        threshold = computeOtsuThreshold(grayValues);
+        thresholdRange.value = String(threshold);
+      }
+
+      thresholdValue.textContent = String(threshold);
+
+      let pixelIndex = 0;
+      for (let i = 0; i < out.length; i += 4) {
+        const binary = grayValues[pixelIndex] >= threshold ? 255 : 0;
+        out[i] = binary;
+        out[i + 1] = binary;
+        out[i + 2] = binary;
+        out[i + 3] = 255;
+        pixelIndex += 1;
+      }
+
+      resultCtx.putImageData(result, 0, 0);
+      infoText.textContent = `Метод: ${method === "otsu" ? "Otsu" : "Ручной"}. Используемый порог: ${threshold}`;
+      downloadBtn.disabled = false;
+    }
+
+    function updateSliderVisibility() {
+      const method = getSelectedMethod();
+      sliderWrap.style.opacity = method === "manual" ? "1" : "0.55";
+      thresholdRange.disabled = method !== "manual";
+    }
+
+    function loadImage(file) {
+      const image = new Image();
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        image.onload = () => {
+          const maxDimension = 1200;
+          const ratio = Math.min(maxDimension / image.width, maxDimension / image.height, 1);
+          const width = Math.max(1, Math.round(image.width * ratio));
+          const height = Math.max(1, Math.round(image.height * ratio));
+
+          setCanvasSize(width, height);
+          sourceCtx.clearRect(0, 0, width, height);
+          resultCtx.clearRect(0, 0, width, height);
+          sourceCtx.drawImage(image, 0, 0, width, height);
+          sourceImageData = sourceCtx.getImageData(0, 0, width, height);
+          binarize();
+        };
+
+        image.src = reader.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      loadImage(file);
+    });
+
+    methodRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        updateSliderVisibility();
+        binarize();
+      });
+    });
+
+    thresholdRange.addEventListener("input", () => {
+      thresholdValue.textContent = thresholdRange.value;
+      if (getSelectedMethod() === "manual") {
+        binarize();
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.download = "binarized.png";
+      link.href = resultCanvas.toDataURL("image/png");
+      link.click();
+    });
+
+    updateSliderVisibility();
+  </script>
 </body>
 </html>
